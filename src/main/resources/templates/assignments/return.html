@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Return Device | Airtel Inventory</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h5><i class="bi bi-arrow-return-left"></i> Process Device Return</h5>
+        </div>
+        <div class="card-body">
+
+            <!-- Summary of what is being returned -->
+            <div class="alert alert-info mb-4">
+                <strong>Device:</strong>
+                <span th:text="${assignment.device.assetTag + ' — ' + assignment.device.brand + ' ' + (assignment.device.model ?: '')}"></span>
+                &nbsp;|&nbsp;
+                <strong>Employee:</strong>
+                <span th:text="${assignment.employee.firstName + ' ' + assignment.employee.lastName}"></span>
+                &nbsp;|&nbsp;
+                <strong>Issued:</strong>
+                <span th:text="${assignment.issueDate}"></span>
+            </div>
+
+            <form th:action="@{/assignments/return}" method="post">
+                <input type="hidden" name="assignmentId" th:value="${assignment.id}">
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Returned To *</label>
+                        <input type="text" class="form-control"
+                               name="returnedTo" placeholder="Admin receiving the device" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Device Status After Return *</label>
+                        <select class="form-select" name="newStatus" required>
+                            <option th:each="s : ${statuses}"
+                                    th:value="${s}"
+                                    th:text="${s}"
+                                    th:selected="${s.name() == 'AVAILABLE'}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2"
+                                  placeholder="Condition notes, remarks on return..."></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-check-circle"></i> Confirm Return
+                    </button>
+                    <a th:href="@{/assignments}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

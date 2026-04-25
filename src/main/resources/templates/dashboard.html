@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Airtel Inventory</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --airtel-red: #e40000;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background-color: var(--airtel-red) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-weight: 500;
+            padding: 8px 14px !important;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.18) !important;
+            color: #fff !important;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            background: linear-gradient(135deg, #e40000 0%, #a00000 100%);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h2 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .page-header .datetime {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* ── SUMMARY CARDS ── */
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+
+        .stat-card .icon {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .label {
+            font-size: 0.82rem;
+            color: #6c757d;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── SECTION CARDS ── */
+        .section-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            border: none;
+            overflow: hidden;
+        }
+
+        .section-card .card-header {
+            background: linear-gradient(135deg, #e40000, #a00000);
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 12px 18px;
+            border: none;
+        }
+
+        /* ── QUICK ACTION BUTTONS ── */
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 1.5px solid;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateX(4px);
+        }
+
+        .action-btn .btn-icon {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ── ACTIVITY TABLE ── */
+        .table th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            font-weight: 600;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .table td {
+            font-size: 0.88rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .table tbody tr:hover {
+            background-color: #fff5f5;
+        }
+
+        /* ── STATUS BADGE ── */
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* ── ALERTS ── */
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+════════════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-hdd-network"></i> Airtel Inventory
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto ms-3">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/devices}">
+                        <i class="bi bi-laptop"></i> Devices
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/employees}">
+                        <i class="bi bi-people"></i> Employees
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/assignments}">
+                        <i class="bi bi-arrow-left-right"></i> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/departments}">
+                        <i class="bi bi-building"></i> Departments
+                    </a>
+                </li>
+            </ul>
+            <span class="text-white-50 small me-2">
+                <i class="bi bi-circle-fill text-success"
+                   style="font-size:0.5rem"></i>
+                System Online
+            </span>
+
+            <span class="text-white-50 small me-2" th:if="${username != null}">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">user</span>
+            </span>
+
+            <a class="btn btn-sm btn-outline-light" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<div class="container-fluid px-4 py-4">
+
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}"
+         class="alert alert-success alert-dismissible fade show mb-3">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}"
+         class="alert alert-danger alert-dismissible fade show mb-3">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div>
+            <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+            <div style="font-size:0.85rem; opacity:0.85; margin-top:4px">
+                Airtel Rwanda — End User Equipment Management
+            </div>
+        </div>
+        <div class="datetime text-end">
+            <div style="font-size:1.1rem; font-weight:600" id="currentTime"></div>
+            <div style="font-size:0.85rem; opacity:0.85" id="currentDate"></div>
+        </div>
+    </div>
+
+    <!-- ── SUMMARY CARDS ── -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+            <div class="stat-card">
+                <div class="icon text-primary">
+                    <i class="bi bi-hdd-stack"></i>
+                </div>
+                <div class="number text-primary"
+                     th:text="${totalDevices}">0</div>
+                <div class="label">Total Devices</div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+            <div class="stat-card">
+                <div class="icon text-success">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="number text-success"
+                     th:text="${availableDevices}">0</div>
+                <div class="label">Available</div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+            <div class="stat-card">
+                <div class="icon text-warning">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <div class="number text-warning"
+                     th:text="${assignedDevices}">0</div>
+                <div class="label">Assigned</div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+            <div class="stat-card">
+                <div class="icon text-info">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <div class="number text-info"
+                     th:text="${underRepairDevices}">0</div>
+                <div class="label">Under Repair</div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+            <div class="stat-card">
+                <div class="icon text-secondary">
+                    <i class="bi bi-archive"></i>
+                </div>
+                <div class="number text-secondary"
+                     th:text="${retiredDevices}">0</div>
+                <div class="label">Retired</div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
+            <div class="stat-card">
+                <div class="icon text-danger">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="number text-danger"
+                     th:text="${totalEmployees}">0</div>
+                <div class="label">Employees</div>
+            </div>
+        </div>
+
+    </div>
+    <!-- END SUMMARY CARDS -->
+
+    <!-- ── QUICK ACTIONS + RECENT ACTIVITY ── -->
+    <div class="row g-3">
+
+        <!-- Quick Actions -->
+        <div class="col-xl-3 col-lg-4">
+            <div class="section-card h-100">
+                <div class="card-header">
+                    <i class="bi bi-lightning-fill me-2"></i>Quick Actions
+                </div>
+                <div class="card-body d-flex flex-column gap-2 p-3">
+
+                    <a th:href="@{/devices/new}"
+                       class="action-btn text-primary border-primary">
+                        <span class="btn-icon">
+                            <i class="bi bi-plus-circle"></i>
+                        </span>
+                        Register New Device
+                    </a>
+
+                    <a th:href="@{/assignments/new}"
+                       class="action-btn text-success border-success">
+                        <span class="btn-icon">
+                            <i class="bi bi-arrow-right-circle"></i>
+                        </span>
+                        Issue Device
+                    </a>
+
+                    <a th:href="@{/employees/new}"
+                       class="action-btn text-warning border-warning">
+                        <span class="btn-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </span>
+                        Add Employee
+                    </a>
+
+                    <a th:href="@{/departments/new}"
+                       class="action-btn text-info border-info">
+                        <span class="btn-icon">
+                            <i class="bi bi-building-add"></i>
+                        </span>
+                        Add Department
+                    </a>
+
+                    <a th:href="@{/assignments}"
+                       class="action-btn text-danger border-danger">
+                        <span class="btn-icon">
+                            <i class="bi bi-list-check"></i>
+                        </span>
+                        Active Assignments
+                    </a>
+
+                    <a th:href="@{/devices?status=AVAILABLE}"
+                       class="action-btn text-secondary border-secondary">
+                        <span class="btn-icon">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        Available Devices
+                    </a>
+
+                    <a th:href="@{/assignments/history}"
+                       class="action-btn text-dark border-dark"
+                       style="border-color:#aaa !important; color:#555 !important">
+                        <span class="btn-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </span>
+                        Assignment History
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="col-xl-9 col-lg-8">
+            <div class="section-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="bi bi-activity me-2"></i>Recent Activity
+                    </span>
+                    <span class="badge bg-white text-danger"
+                          th:text="${recentActivity.size()} + ' events'">
+                    </span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                            <tr class="bg-light">
+                                <th class="ps-3">Time</th>
+                                <th>Asset Tag</th>
+                                <th>Device</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>Performed By</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="log : ${recentActivity}">
+                                <td class="ps-3 text-muted"
+                                    th:text="${#temporals.format(log.timestamp, 'dd/MM HH:mm')}">
+                                </td>
+                                <td class="fw-bold text-danger"
+                                    th:text="${log.device.assetTag}">
+                                </td>
+                                <td th:text="${log.device.brand + ' ' + (log.device.model != null ? log.device.model : '')}">
+                                </td>
+                                <td>
+                                        <span th:class="${
+                                            log.action.contains('REGISTERED') ? 'badge bg-primary' :
+                                            log.action.contains('ISSUED') ? 'badge bg-success' :
+                                            log.action.contains('RETURNED') ? 'badge bg-warning text-dark' :
+                                            log.action.contains('RETIRED') ? 'badge bg-secondary' :
+                                            log.action.contains('UPDATED') ? 'badge bg-info' :
+                                            'badge bg-dark'}"
+                                              th:text="${log.action}">
+                                        </span>
+                                </td>
+                                <td class="text-muted small"
+                                    th:text="${log.details}">
+                                </td>
+                                <td th:text="${log.performedBy}"></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentActivity)}">
+                                <td colspan="6"
+                                    class="text-center text-muted py-5">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                    No activity yet — start by registering a device
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- END QUICK ACTIONS + RECENT ACTIVITY -->
+
+    <!-- ── FOOTER ── -->
+    <div class="text-center text-muted mt-4"
+         style="font-size:0.8rem; padding-bottom: 20px">
+        <i class="bi bi-shield-check text-danger"></i>
+        Airtel Rwanda Inventory Management System &copy; 2026
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+<script>
+    // Live clock update every second
+    function updateDateTime() {
+        const now = new Date();
+
+        // Format time: HH:MM:SS
+        const time = now.toLocaleTimeString('en-GB', {
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+
+        // Format date: Wednesday, 22 April 2026
+        const date = now.toLocaleDateString('en-GB', {
+            weekday: 'long', day: 'numeric',
+            month: 'long', year: 'numeric'
+        });
+
+        document.getElementById('currentTime').textContent = time;
+        document.getElementById('currentDate').textContent = date;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+</script>
+</body>
+</html>

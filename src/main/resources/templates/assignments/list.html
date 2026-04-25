@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Assignments | Airtel Inventory</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container-fluid mt-4 px-4">
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-arrow-left-right text-danger"></i> Active Assignments</h2>
+        <div class="d-flex gap-2">
+            <a th:href="@{/assignments/history}" class="btn btn-outline-secondary">
+                <i class="bi bi-clock-history"></i> View History
+            </a>
+            <a th:href="@{/assignments/new}" class="btn btn-danger">
+                <i class="bi bi-plus-circle"></i> Issue Device
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-danger">
+                    <tr>
+                        <th>Asset Tag</th>
+                        <th>Device</th>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Issue Date</th>
+                        <th>Issued By</th>
+                        <th>Purpose</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${assignments}">
+                        <td class="fw-bold" th:text="${a.device.assetTag}"></td>
+                        <td th:text="${a.device.brand + ' ' + (a.device.model ?: '')}"></td>
+                        <td th:text="${a.employee.firstName + ' ' + a.employee.lastName}"></td>
+                        <td th:text="${a.employee.department != null ? a.employee.department.name : '-'}"></td>
+                        <td th:text="${a.issueDate}"></td>
+                        <td th:text="${a.issuedBy}"></td>
+                        <td th:text="${a.purpose}"></td>
+                        <td>
+                            <a th:href="@{/assignments/return/{id}(id=${a.id})}"
+                               class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-arrow-return-left"></i> Return
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(assignments)}">
+                        <td colspan="8" class="text-center text-muted py-4">
+                            No active assignments
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

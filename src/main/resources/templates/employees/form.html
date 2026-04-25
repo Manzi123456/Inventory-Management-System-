@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Form | Airtel Inventory</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h5 th:text="${employee.id != null ? 'Edit Employee' : 'Add New Employee'}"></h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/employees/save}" th:object="${employee}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Employee ID *</label>
+                        <input type="text" class="form-control"
+                               th:field="*{employeeId}"
+                               placeholder="e.g. EMP-045" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">First Name *</label>
+                        <input type="text" class="form-control"
+                               th:field="*{firstName}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Last Name *</label>
+                        <input type="text" class="form-control"
+                               th:field="*{lastName}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Department</label>
+                        <!-- th:field on select binds selected option to employee.department.id -->
+                        <select class="form-select" th:field="*{department}">
+                            <option value="">Select department...</option>
+                            <option th:each="dept : ${departments}"
+                                    th:value="${dept.id}"
+                                    th:text="${dept.name}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Job Title</label>
+                        <input type="text" class="form-control"
+                               th:field="*{jobTitle}"
+                               placeholder="e.g. Network Engineer">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Email:j</label>
+                        <input type="email" class="form-control"
+                               th:field="*{email}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Phone</label>
+                        <input type="text" class="form-control"
+                               th:field="*{phone}">
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-save"></i> Save Employee
+                    </button>
+                    <a th:href="@{/employees}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

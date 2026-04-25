@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Form | Airtel Inventory</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <!-- Shows "Edit Device" if id exists, "Register Device" if new -->
+            <h5 th:text="${device.id != null ? 'Edit Device' : 'Register New Device'}">
+            </h5>
+        </div>
+        <div class="card-body">
+
+            <!-- th:action → form posts to /devices/save -->
+            <!-- th:object → binds this form to the device object from controller -->
+            <form th:action="@{/devices/save}" th:object="${device}" method="post">
+
+                <!-- Hidden id field — needed for JPA to know it's an update not insert -->
+                <input type="hidden" th:field="*{id}">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Asset Tag *</label>
+                        <!-- th:field="*{assetTag}" → binds to device.assetTag -->
+                        <!-- *{} syntax works because of th:object on the form -->
+                        <input type="text" class="form-control"
+                               th:field="*{assetTag}"
+                               placeholder="e.g. AIR-LT-001" required>
+                        <!-- th:errors → shows validation error for this field -->
+                        <div class="text-danger small" th:errors="*{assetTag}"></div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Device Type *</label>
+                        <select class="form-select" th:field="*{deviceType}" required>
+                            <option value="">Select type...</option>
+                            <option th:each="t : ${deviceTypes}"
+                                    th:value="${t}" th:text="${t}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Brand *</label>
+                        <input type="text" class="form-control"
+                               th:field="*{brand}"
+                               placeholder="e.g. Dell, HP, Samsung" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Model</label>
+                        <input type="text" class="form-control"
+                               th:field="*{model}"
+                               placeholder="e.g. Latitude 5520">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Serial Number</label>
+                        <input type="text" class="form-control"
+                               th:field="*{serialNumber}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Processor</label>
+                        <input type="text" class="form-control"
+                               th:field="*{processor}"
+                               placeholder="e.g. Intel Core i5">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">RAM</label>
+                        <input type="text" class="form-control"
+                               th:field="*{ram}" placeholder="e.g. 8GB">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Storage</label>
+                        <input type="text" class="form-control"
+                               th:field="*{storage}" placeholder="e.g. 256GB SSD">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Operating System</label>
+                        <input type="text" class="form-control"
+                               th:field="*{operatingSystem}"
+                               placeholder="e.g. Windows 11">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Condition</label>
+                        <select class="form-select" th:field="*{condition}">
+                            <option value="">Select condition...</option>
+                            <option th:each="c : ${conditions}"
+                                    th:value="${c}" th:text="${c}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Purchase Date</label>
+                        <input type="date" class="form-control"
+                               th:field="*{purchaseDate}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Warranty Expiry</label>
+                        <input type="date" class="form-control"
+                               th:field="*{warrantyExpiry}">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Notes</label>
+                        <textarea class="form-control" th:field="*{notes}"
+                                  rows="2" placeholder="Any additional notes...">
+                        </textarea>
+                    </div>
+
+                </div>
+
+                <!-- Form action buttons -->
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-save"></i> Save Device
+                    </button>
+                    <a th:href="@{/devices}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x"></i> Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+</script>
+</body>
+</html>
